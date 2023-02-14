@@ -9,24 +9,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import system.gc.models.Error;
 
 @Log4j2
-//@ControllerAdvice
+@ControllerAdvice
 public class ExceptionsAdvice {
-/*
     @ExceptionHandler(GerencianetException.class)
-    public Mono<ResponseEntity<Error>> gerencianetException(GerencianetException exception)
+    public ResponseEntity<Error> gerencianetException(GerencianetException exception)
     {
         log.error(exception.getMessage());
         log.error(exception.getError());
         log.error(exception.getErrorDescription());
         log.error(exception.getCause());
-        return Mono.just(ResponseEntity.badRequest().body(new Error(HttpStatus.BAD_REQUEST.value(), exception.getErrorDescription())));
+        return ResponseEntity.badRequest().body(new Error(HttpStatus.BAD_REQUEST.value(), exception.getErrorDescription()));
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public Mono<ResponseEntity<Error>> illegalStateException(IllegalStateException exception)
+    public ResponseEntity<Error> illegalStateException(IllegalStateException exception)
     {
         log.error(exception.getMessage());
         log.error(exception.getCause());
-        return Mono.just(ResponseEntity.badRequest().body(new Error(exception.getMessage())));
-    } */
+        return ResponseEntity.badRequest().body(new Error(exception.getMessage()));
+    }
 }
