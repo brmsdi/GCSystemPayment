@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import system.gc.config.GenerateTXIDImpl;
+import system.gc.configuration.GenerateTXIDImpl;
 import system.gc.gerencianet.GerenciaNETInitialize;
 import system.gc.models.Credentials;
 import system.gc.services.PixService;

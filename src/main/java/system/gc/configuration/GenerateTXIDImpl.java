@@ -1,3 +1,3 @@
-package system.gc.config;
+package system.gc.configuration;
 
 public class GenerateTXIDImpl implements GenerateTXID {}

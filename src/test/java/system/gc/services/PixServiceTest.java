@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import system.gc.config.GenerateTXIDImpl;
+import system.gc.configuration.GenerateTXIDImpl;
 import system.gc.gerencianet.GerenciaNETInitialize;
 import system.gc.models.Credentials;
 import java.time.*;

@@ -19,7 +19,7 @@ public class UserModelDetailsService implements UserDetailsService {
     @Autowired
     private AuthenticationService authenticationService;
 
-    private final String ORGANIZATION = "gcsystem";
+    private final String ORGANIZATION = "GCSYSTEM";
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel userModel = authenticationService.findForOrganization(ORGANIZATION, username);

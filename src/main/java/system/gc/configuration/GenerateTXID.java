@@ -1,4 +1,4 @@
-package system.gc.config;
+package system.gc.configuration;
 
 import java.util.UUID;
 

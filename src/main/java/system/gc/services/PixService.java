@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import system.gc.config.GenerateTXID;
+import system.gc.configuration.GenerateTXID;
 import java.util.HashMap;
 import java.util.Map;
 
