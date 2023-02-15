@@ -7,7 +7,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import system.gc.models.Credentials;
 import system.gc.configuration.GenerateTXID;
+import system.gc.gerencianet.GerenciaNETInitialize;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,55 +21,60 @@ import java.util.Map;
 public class PixService {
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private Credentials credentials;
+
+    private GerenciaNETInitialize gerenciaNETInitialize;
+
     /**
      * Gerar novas cobranças pix
-     * @param gerencianet api do gerencianet
      * @param body corpo da requisição exigidos pela API do gerencianet
      * @param information Informações adionais da cobrança
      * @return Objeto JSON da cobrança
      */
-    public JSONObject createChargePix(Gerencianet gerencianet, JSONObject body, JSONArray information, GenerateTXID generateTXID) throws Exception {
+    public JSONObject createChargePix(JSONObject body, JSONArray information, GenerateTXID generateTXID) throws Exception {
         body.put("infoAdicionais", information);
-        return createChargePix(gerencianet, body, generateTXID);
+        return createChargePix(body, generateTXID);
     }
 
     /**
      * Gerar novas cobranças pix
-     * @param gerencianet api do gerencianet
      * @param body corpo da requisição exigidos pela API do gerencianet
      * @return Objeto JSON da cobrança
      */
-    public JSONObject createChargePix(Gerencianet gerencianet, JSONObject body, GenerateTXID generateTXID) throws Exception {
+    public JSONObject createChargePix(JSONObject body, GenerateTXID generateTXID) throws Exception {
+        Gerencianet gerencianet = getGerenciaNET(new GerenciaNETInitialize(), credentials);
         body.put("chave", environment.getProperty("CHAVE"));
         return gerencianet.call("pixCreateCharge", prepareParams(generateTXID), body);
     }
     /**
      * Listar cobranças pix em um determinado intervalo de tempo
-     * @param gerencianet api do gerencianet
      * @param params parametros exigidos pela API do gerencianet
      * @return Objetos JSON das cobranças pix
      */
-    public JSONObject pixListCharges(Gerencianet gerencianet, HashMap<String, String> params, JSONObject jsonObject) throws Exception {
+    public JSONObject pixListCharges(HashMap<String, String> params, JSONObject jsonObject) throws Exception {
+        Gerencianet gerencianet = getGerenciaNET(new GerenciaNETInitialize(), credentials);
         return gerencianet.call("pixListCharges", params, jsonObject);
     }
 
     /**
      * Consultar detalhes de uma cobrança por id
-     * @param gerencianet api do gerencianet
      * @param params parametros exigidos pela API do gerencianet
      * @return Objeto JSON com os detalhes da cobrança
      */
-    public JSONObject pixDetailsCharge(Gerencianet gerencianet, HashMap<String, String> params, JSONObject jsonObject) throws Exception {
+    public JSONObject pixDetailsCharge(HashMap<String, String> params, JSONObject jsonObject) throws Exception {
+        Gerencianet gerencianet = getGerenciaNET(new GerenciaNETInitialize(), credentials);
         return gerencianet.call("pixDetailCharge", params, jsonObject);
     }
 
     /**
      * Gerar QRCODE Para pagamento
-     * @param gerencianet api do gerencianet
      * @param params parametros exigidos pela API do gerencianet. ID do location
      * @return pix copia/cola e QRCODE com codificação base64
      */
-    public JSONObject generateQRCode(Gerencianet gerencianet, HashMap<String, String> params, HashMap<String, Object> hashMap) throws Exception {
+    public JSONObject generateQRCode(HashMap<String, String> params, HashMap<String, Object> hashMap) throws Exception {
+        Gerencianet gerencianet = getGerenciaNET(new GerenciaNETInitialize(), credentials);
         return mapToJSON(gerencianet.call("pixGenerateQRCode", params, hashMap));
     }
 
@@ -83,4 +90,7 @@ public class PixService {
         return new JSONObject(map);
     }
 
+    public Gerencianet getGerenciaNET(GerenciaNETInitialize gerenciaNETInitialize, Credentials credentials) throws Exception {
+        return gerenciaNETInitialize.createDefaultChargePixSystemGerenciaNetWithOptions(credentials);
+    }
 }

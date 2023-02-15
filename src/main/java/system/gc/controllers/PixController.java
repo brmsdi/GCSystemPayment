@@ -6,8 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import system.gc.configuration.GenerateTXIDImpl;
-import system.gc.gerencianet.GerenciaNETInitialize;
-import system.gc.models.Credentials;
 import system.gc.services.PixService;
 import java.util.HashMap;
 
@@ -18,12 +16,9 @@ public class PixController {
     @Autowired
     private PixService pixService;
 
-    @Autowired
-    private Credentials credentials;
-
     @PostMapping("new")
     public ResponseEntity<String> createChargePix(@RequestBody String debt) throws Exception {
-        JSONObject chargePix = pixService.createChargePix(new GerenciaNETInitialize().createDefaultChargePixSystemGerenciaNetWithOptions(credentials), new JSONObject(debt), new GenerateTXIDImpl());
+        JSONObject chargePix = pixService.createChargePix(new JSONObject(debt), new GenerateTXIDImpl());
         return ResponseEntity.ok(chargePix.toString());
     }
 
@@ -37,7 +32,7 @@ public class PixController {
         params.put("fim", end);
         params.put("paginacao.paginaAtual", currentPage);
         params.put("paginacao.itensPorPagina", itemsPerPage);
-        JSONObject result = pixService.pixListCharges(new GerenciaNETInitialize().createDefaultChargePixSystemGerenciaNetWithOptions(credentials), params, new JSONObject());
+        JSONObject result = pixService.pixListCharges(params, new JSONObject());
         return ResponseEntity.ok(result.toString());
     }
 
@@ -45,7 +40,7 @@ public class PixController {
     public ResponseEntity<String> details(@RequestParam(name = "txid") String txid) throws Exception {
         HashMap<String, String> params = new HashMap<>();
         params.put("txid", txid);
-        JSONObject result = pixService.pixDetailsCharge(new GerenciaNETInitialize().createDefaultChargePixSystemGerenciaNetWithOptions(credentials), params, new JSONObject());
+        JSONObject result = pixService.pixDetailsCharge(params, new JSONObject());
         return ResponseEntity.ok(result.toString());
     }
 
@@ -53,7 +48,7 @@ public class PixController {
     public ResponseEntity<String> generateQRCode(@RequestParam(name = "id") String id) throws Exception {
         HashMap<String, String> params = new HashMap<>();
         params.put("id", id);
-        JSONObject result = pixService.generateQRCode(new GerenciaNETInitialize().createDefaultChargePixSystemGerenciaNetWithOptions(credentials), params, new HashMap<>());
+        JSONObject result = pixService.generateQRCode(params, new HashMap<>());
         return ResponseEntity.ok(result.toString());
     }
 }
