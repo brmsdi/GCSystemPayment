@@ -12,6 +12,9 @@ public final class TextUtils {
 
     public static final ZoneId zoneManaus = ZoneId.of("America/Manaus");
     public static Gson GSON = new Gson();
+
+    public static final String ORGANIZATION = "GCSYSTEM";
+
     public static String generateTXID()
     {
         return UUID.randomUUID().toString().replace("-", "");

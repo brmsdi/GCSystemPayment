@@ -10,7 +10,7 @@ import java.util.Map;
 public interface CreateTokenSuccessFulAuthentication {
     default void createTokenSuccessFulAuthentication(HttpServletResponse response,
                                                      final Map<String, String> params) throws Exception {
-        writeToken(JWTService.createTokenJWT(params, LocalDateTime.now(), 2), response);
+        writeToken(JWTService.createTokenJWT(params, LocalDateTime.now(), 5), response);
     }
 
     private void writeToken(String token, HttpServletResponse response) throws IOException {

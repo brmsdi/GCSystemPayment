@@ -14,8 +14,8 @@ public class AuthenticationService {
 
     public UserModel findForOrganization(String organizationTag, String username) throws UsernameNotFoundException
     {
-        String usernameProp = environment.getProperty(organizationTag.concat(".USERNAME"));
-        String password = environment.getProperty(organizationTag.concat(".PASSWORD"));
+        String usernameProp = environment.getProperty(organizationTag.concat("_USERNAME"));
+        String password = environment.getProperty(organizationTag.concat("_PASSWORD"));
         if (usernameProp == null || usernameProp.isEmpty() || password == null || password.isEmpty()) {
             throw new UsernameNotFoundException("Usuário não encontrado!");
         }

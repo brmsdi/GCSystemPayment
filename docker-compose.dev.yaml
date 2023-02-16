@@ -11,3 +11,7 @@ services:
     ports:
       - "8080:8080"
       - "8000:8000"
+    volumes:
+      - certificates:/app/certificates
+volumes:
+  certificates:

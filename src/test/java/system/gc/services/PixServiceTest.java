@@ -53,28 +53,28 @@ public class PixServiceTest {
                 e.printStackTrace();
             }
 
-            Mockito.when(environment.getProperty("client_id"))
-                    .thenReturn(credentialsJSONObject.getString("client_id"));
-            Mockito.when(environment.getProperty("client_secret"))
-                    .thenReturn(credentialsJSONObject.getString("client_secret"));
-            Mockito.when(environment.getProperty("certificate"))
-                    .thenReturn(credentialsJSONObject.getString("certificate"));
-            Mockito.when(environment.getProperty("sandbox"))
-                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("sandbox")));
-            Mockito.when(environment.getProperty("debug"))
-                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("debug")));
+            Mockito.when(environment.getProperty("CLIENT_ID"))
+                    .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
+            Mockito.when(environment.getProperty("CLIENT_SECRET"))
+                    .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
+            Mockito.when(environment.getProperty("CERTIFICATE"))
+                    .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
+            Mockito.when(environment.getProperty("SANDBOX"))
+                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("SANDBOX")));
+            Mockito.when(environment.getProperty("DEBUG"))
+                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("DEBUG")));
 //            Credentials testCredentials = credentials.credentials();
 
             Mockito.when(credentialsMock.getClientId())
-                    .thenReturn(credentialsJSONObject.getString("client_id"));
+                    .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
             Mockito.when(credentialsMock.getClientSecret())
-                    .thenReturn(credentialsJSONObject.getString("client_secret"));
+                    .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
             Mockito.when(credentialsMock.getCertificate())
-                    .thenReturn(credentialsJSONObject.getString("certificate"));
+                    .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
             Mockito.when(credentialsMock.isSandbox())
-                    .thenReturn(credentialsJSONObject.getBoolean("sandbox"));
+                    .thenReturn(credentialsJSONObject.getBoolean("SANDBOX"));
             Mockito.when(credentialsMock.isDebug())
-                    .thenReturn(credentialsJSONObject.getBoolean("debug"));
+                    .thenReturn(credentialsJSONObject.getBoolean("DEBUG"));
 
             if (chargePix == null)
             {

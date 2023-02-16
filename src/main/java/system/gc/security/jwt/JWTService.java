@@ -38,7 +38,6 @@ public class JWTService {
                 .withIssuedAt(Date.from(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant()))
                 .withExpiresAt(Date.from(localDateTimeNow.plusMinutes(TIME).atZone(ZoneId.systemDefault()).toInstant()));
         claims.forEach(builder::withClaim);
-        //System.getProperties().forEach((k, v) -> System.out.println(k + " :: " + v));
         return builder.sign(Algorithm.HMAC256(System.getenv("PRIVATE_KEY_TOKEN")));
     }
 

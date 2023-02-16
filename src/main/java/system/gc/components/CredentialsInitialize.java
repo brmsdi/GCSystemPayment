@@ -17,11 +17,11 @@ public class CredentialsInitialize {
     public Credentials init()
     {
         return Credentials.create(
-                Objects.requireNonNull(environment.getProperty("client_id")),
-                Objects.requireNonNull(environment.getProperty("client_secret")),
-                Objects.requireNonNull(environment.getProperty("certificate")),
-                Boolean.parseBoolean(Objects.requireNonNull(environment.getProperty("sandbox"))),
-                Boolean.parseBoolean(Objects.requireNonNull(environment.getProperty("debug")))
+                Objects.requireNonNull(environment.getProperty("CLIENT_ID")),
+                Objects.requireNonNull(environment.getProperty("CLIENT_SECRET")),
+                Objects.requireNonNull(environment.getProperty("CERTIFICATE")),
+                Boolean.parseBoolean(Objects.requireNonNull(environment.getProperty("SANDBOX"))),
+                Boolean.parseBoolean(Objects.requireNonNull(environment.getProperty("DEBUG")))
         );
     }
 

@@ -48,6 +48,7 @@ public class PixService {
         body.put("chave", environment.getProperty("CHAVE"));
         return gerencianet.call("pixCreateCharge", prepareParams(generateTXID), body);
     }
+
     /**
      * Listar cobranças pix em um determinado intervalo de tempo
      * @param params parametros exigidos pela API do gerencianet

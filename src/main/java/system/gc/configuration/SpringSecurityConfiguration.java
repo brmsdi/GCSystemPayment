@@ -1,5 +1,6 @@
 package system.gc.configuration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,72 +13,65 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import system.gc.security.UserModelDetailsService;
-import system.gc.security.filters.AuthenticationFilter;
-import system.gc.security.filters.JWTAuthenticationEntryPoint;
 import system.gc.security.filters.JWTAuthenticationFilter;
-
+import system.gc.security.filters.JWTAuthenticationEntryPoint;
+import system.gc.security.filters.JWTValidate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Log4j2
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
-
     @Autowired
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     private Environment environment;
 
+    private final UserModelDetailsService userModelDetailsService;
+
     private final ProviderManager providerManager;
 
     protected SpringSecurityConfiguration(UserModelDetailsService userModelDetailsService)
     {
+        this.userModelDetailsService = userModelDetailsService;
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userModelDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(this.userModelDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A));
         this.providerManager = new ProviderManager(daoAuthenticationProvider);
-    }
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter2(), UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.csrf().disable();
-        httpSecurity
-                .cors()
-                //.configurationSource(corsConfigurationSource())
-                .and()
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.GET, "/v1/pix/xxx").permitAll();
-                    authorizationManagerRequestMatcherRegistry.anyRequest().authenticated();
-                });
-        httpSecurity.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
-        return httpSecurity.build();
     }
 
     @Bean
-    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter()
-    {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
-        authenticationFilter.setFilterProcessesUrl("/login");
-        authenticationFilter.setAuthenticationManager(providerManager);
-        return authenticationFilter;
-    }
-    @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter2() {
-        return new JWTAuthenticationFilter();
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        log.info("Configuration");
+        httpSecurity
+                .cors()
+                .and()
+                .csrf()
+                .disable()
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+                        .requestMatchers(HttpMethod.POST, "/login")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                        .addFilterBefore(new JWTValidate(userModelDetailsService), JWTAuthenticationFilter.class)
+                        .addFilter(new JWTAuthenticationFilter(providerManager))
+                        .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .and()
+                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        return httpSecurity.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource()
     {
+        log.info("Cors configuration");
         String[] originsSplit = Objects.requireNonNull(environment.getProperty("ORIGINS")).split(",");
         CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "UPDATE", "PUT", "DELETE", "OPTIONS"));

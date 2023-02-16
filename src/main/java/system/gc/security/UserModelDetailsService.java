@@ -7,19 +7,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import system.gc.models.UserModel;
 import system.gc.services.AuthenticationService;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Component
+import static system.gc.utils.TextUtils.ORGANIZATION;
+
+@Service
 public class UserModelDetailsService implements UserDetailsService {
 
     @Autowired
     private AuthenticationService authenticationService;
 
-    private final String ORGANIZATION = "GCSYSTEM";
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel userModel = authenticationService.findForOrganization(ORGANIZATION, username);
