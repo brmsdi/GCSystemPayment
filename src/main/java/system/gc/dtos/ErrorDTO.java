@@ -1,18 +1,18 @@
-package system.gc.models;
+package system.gc.dtos;
 
 import lombok.Data;
 
 @Data
-public class Error {
+public class ErrorDTO {
     private Integer status;
     private String message;
 
-    public Error(Integer status, String message) {
+    public ErrorDTO(Integer status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    public Error(String message) {
+    public ErrorDTO(String message) {
         this.message = message;
     }
 }

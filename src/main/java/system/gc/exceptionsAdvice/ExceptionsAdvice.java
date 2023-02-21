@@ -6,26 +6,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import system.gc.models.Error;
+import system.gc.dtos.ErrorDTO;
 
 @Log4j2
 @ControllerAdvice
 public class ExceptionsAdvice {
     @ExceptionHandler(GerencianetException.class)
-    public ResponseEntity<Error> gerencianetException(GerencianetException exception)
+    public ResponseEntity<ErrorDTO> gerencianetException(GerencianetException exception)
     {
         log.error(exception.getMessage());
         log.error(exception.getError());
         log.error(exception.getErrorDescription());
-        log.error(exception.getCause());
-        return ResponseEntity.badRequest().body(new Error(HttpStatus.BAD_REQUEST.value(), exception.getErrorDescription()));
+        return ResponseEntity.badRequest().body(new ErrorDTO(HttpStatus.BAD_REQUEST.value(), exception.getErrorDescription()));
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Error> illegalStateException(IllegalStateException exception)
+    public ResponseEntity<ErrorDTO> illegalStateException(IllegalStateException exception)
     {
         log.error(exception.getMessage());
         log.error(exception.getCause());
-        return ResponseEntity.badRequest().body(new Error(exception.getMessage()));
+        return ResponseEntity.badRequest().body(new ErrorDTO(exception.getMessage()));
     }
 }

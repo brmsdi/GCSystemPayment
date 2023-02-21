@@ -13,12 +13,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import system.gc.security.UserModelDetailsService;
-import system.gc.security.filters.JWTAuthenticationFilter;
 import system.gc.security.filters.JWTAuthenticationEntryPoint;
+import system.gc.security.filters.JWTAuthenticationFilter;
 import system.gc.security.filters.JWTValidate;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +29,6 @@ import java.util.Objects;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
-    @Autowired
-    private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
     @Autowired
     private Environment environment;
 
@@ -56,16 +54,20 @@ public class SpringSecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers(HttpMethod.POST, "/login")
-                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest()
                         .authenticated())
-                        .addFilterBefore(new JWTValidate(userModelDetailsService), JWTAuthenticationFilter.class)
-                        .addFilter(new JWTAuthenticationFilter(providerManager))
-                        .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint())
                         .and()
+                        .addFilterBefore(new JWTValidate(userModelDetailsService), JWTAuthenticationFilter.class)
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return httpSecurity.build();
+    }
+
+    @Bean
+    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter()
+    {
+        return new JWTAuthenticationFilter(providerManager);
     }
 
     @Bean

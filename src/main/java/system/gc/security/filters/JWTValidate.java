@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import system.gc.security.UserModelDetailsService;
 import system.gc.security.jwt.JWTService;
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 public class JWTValidate extends OncePerRequestFilter {
@@ -26,21 +27,31 @@ public class JWTValidate extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getTokenFromHeader(request);
-        if (token == null || !token.startsWith("Bearer"))
+        log.info("VALIDATE");
+        List<String> permitted = List.of("/login");
+        if (permitted.contains(request.getRequestURI()))
         {
             filterChain.doFilter(request, response);
             return;
         }
+        String token = getTokenFromHeader(request);
+        if (token == null || !token.startsWith("Bearer"))
+        {
+            log.warn("Requisição sem Bearer token");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             token = clearTypeToken(token);
             DecodedJWT decodedJWT = JWTService.isValid(token);
             SecurityContextHolder.getContext().setAuthentication(getUsernamePasswordAuthenticationToken(decodedJWT));
-            response.setStatus(HttpServletResponse.SC_GONE);
+            log.info("Token de acesso valido");
             filterChain.doFilter(request, response);
         } catch (JWTVerificationException jwtVerificationException) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             jwtVerificationException.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 

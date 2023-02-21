@@ -9,8 +9,8 @@ services:
     env_file:
       - ./env/development.env
     ports:
-      - "8080:8080"
-      - "8000:8000"
+      - "8081:8081"
+      - "8001:8001"
     volumes:
       - certificates:/app/certificates
 volumes:

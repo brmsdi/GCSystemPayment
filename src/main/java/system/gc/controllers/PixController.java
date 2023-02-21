@@ -51,4 +51,10 @@ public class PixController {
         JSONObject result = pixService.generateQRCode(params, new HashMap<>());
         return ResponseEntity.ok(result.toString());
     }
+
+    @GetMapping("tt")
+    public ResponseEntity<String> tt()
+    {
+        return ResponseEntity.ok("ok");
+    }
 }
