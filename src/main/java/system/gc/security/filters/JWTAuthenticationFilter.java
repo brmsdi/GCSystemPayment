@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import system.gc.dtos.ErrorDTO;
+import system.gc.dtos.ErrorInfoDTO;
 import system.gc.security.jwt.CreateTokenSuccessFulAuthentication;
 import system.gc.utils.TextUtils;
 
@@ -28,7 +29,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().print(TextUtils.GSON.toJson(new ErrorDTO(HttpStatus.UNAUTHORIZED.value(), failed.getMessage())));
+        response.getWriter().print(TextUtils.GSON.toJson(new ErrorInfoDTO(new ErrorDTO(HttpStatus.UNAUTHORIZED.value(), failed.getMessage()))));
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 

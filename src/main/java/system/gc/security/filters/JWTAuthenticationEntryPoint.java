@@ -27,5 +27,6 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         response
                 .getWriter()
                 .print(TextUtils.GSON.toJson(errorInfoDTO));
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
