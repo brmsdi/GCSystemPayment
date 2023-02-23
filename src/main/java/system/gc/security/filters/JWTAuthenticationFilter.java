@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
@@ -13,12 +14,12 @@ import system.gc.dtos.ErrorDTO;
 import system.gc.dtos.ErrorInfoDTO;
 import system.gc.security.jwt.CreateTokenSuccessFulAuthentication;
 import system.gc.utils.TextUtils;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements CreateTokenSuccessFulAuthentication {
+
 
     public JWTAuthenticationFilter(ProviderManager providerManager)
     {

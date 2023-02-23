@@ -52,9 +52,11 @@ public class PixController {
         return ResponseEntity.ok(result.toString());
     }
 
-    @GetMapping("tt")
-    public ResponseEntity<String> tt()
-    {
-        return ResponseEntity.ok("ok");
+    @PostMapping("update")
+    public ResponseEntity<String> updateCharge(@RequestParam String txid, @RequestBody String charge) throws Exception {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("txid", txid);
+        JSONObject chargePix = pixService.updateChargePix(params, new JSONObject(charge));
+        return ResponseEntity.ok(chargePix.toString());
     }
 }

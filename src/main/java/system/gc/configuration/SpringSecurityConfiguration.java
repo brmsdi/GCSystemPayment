@@ -47,7 +47,7 @@ public class SpringSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        log.info("Configuration");
+        log.info("Security Filter Chain");
         httpSecurity
                 .cors()
                 .and()

@@ -40,62 +40,52 @@ public class PixServiceTest {
     private PixService pixService;
 
     @BeforeEach
-    public void setup() {
-        try {
-            Mockito.when(environment.getActiveProfiles()).thenReturn(new String[]{"test"});
-            InputStream credentialsFile = Objects.requireNonNull(Credentials.class.getClassLoader().getResourceAsStream("credentials-homo.json"));
-            JSONTokener tokener = new JSONTokener(credentialsFile);
-            JSONObject credentialsJSONObject = new JSONObject(tokener);
+    public void setup() throws Exception {
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[]{"test"});
+        InputStream credentialsFile = Objects.requireNonNull(Credentials.class.getClassLoader().getResourceAsStream("credentials-homo.json"));
+        JSONTokener tokener = new JSONTokener(credentialsFile);
+        JSONObject credentialsJSONObject = new JSONObject(tokener);
+        credentialsFile.close();
 
-            try {
-                credentialsFile.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Mockito.when(environment.getProperty("CLIENT_ID"))
+                .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
+        Mockito.when(environment.getProperty("CLIENT_SECRET"))
+                .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
+        Mockito.when(environment.getProperty("CERTIFICATE"))
+                .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
+        Mockito.when(environment.getProperty("SANDBOX"))
+                .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("SANDBOX")));
+        Mockito.when(environment.getProperty("DEBUG"))
+                .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("DEBUG")));
 
-            Mockito.when(environment.getProperty("CLIENT_ID"))
-                    .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
-            Mockito.when(environment.getProperty("CLIENT_SECRET"))
-                    .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
-            Mockito.when(environment.getProperty("CERTIFICATE"))
-                    .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
-            Mockito.when(environment.getProperty("SANDBOX"))
-                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("SANDBOX")));
-            Mockito.when(environment.getProperty("DEBUG"))
-                    .thenReturn(String.valueOf(credentialsJSONObject.getBoolean("DEBUG")));
-//            Credentials testCredentials = credentials.credentials();
+        Mockito.when(credentialsMock.getClientId())
+                .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
+        Mockito.when(credentialsMock.getClientSecret())
+                .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
+        Mockito.when(credentialsMock.getCertificate())
+                .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
+        Mockito.when(credentialsMock.isSandbox())
+                .thenReturn(credentialsJSONObject.getBoolean("SANDBOX"));
+        Mockito.when(credentialsMock.isDebug())
+                .thenReturn(credentialsJSONObject.getBoolean("DEBUG"));
 
-            Mockito.when(credentialsMock.getClientId())
-                    .thenReturn(credentialsJSONObject.getString("CLIENT_ID"));
-            Mockito.when(credentialsMock.getClientSecret())
-                    .thenReturn(credentialsJSONObject.getString("CLIENT_SECRET"));
-            Mockito.when(credentialsMock.getCertificate())
-                    .thenReturn(credentialsJSONObject.getString("CERTIFICATE"));
-            Mockito.when(credentialsMock.isSandbox())
-                    .thenReturn(credentialsJSONObject.getBoolean("SANDBOX"));
-            Mockito.when(credentialsMock.isDebug())
-                    .thenReturn(credentialsJSONObject.getBoolean("DEBUG"));
-
-            if (chargePix == null)
-            {
-                //Cria registro para uso nos testes
-                JSONObject body = new JSONObject();
-                body.put("calendario", new JSONObject().put("expiracao", 3600));
-                body.put("devedor", new JSONObject().put("cpf", "94271564656").put("nome", "Gorbadoc Oldbuck"));
-                body.put("valor", new JSONObject().put("original", "500.00"));
-                body.put("solicitacaoPagador", "Aluguel referente a data: ".concat(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
-                String txid = generateTXID();
-                HashMap<String, String> params = new HashMap<>();
-                params.put("txid", txid);
-                Mockito.when(environment.getProperty("CHAVE"))
-                        .thenReturn("811701dc-1257-4bf5-abb7-1968c2611d8b");
-                Mockito.when(pixService.prepareParams(generateTXID))
-                        .thenReturn(params);
-                body.put("chave", "811701dc-1257-4bf5-abb7-1968c2611d8b");
-                chargePix = pixService.createChargePix(body, generateTXID);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (chargePix == null)
+        {
+            //Cria registro para uso nos testes
+            JSONObject body = new JSONObject();
+            body.put("calendario", new JSONObject().put("expiracao", 3600));
+            body.put("devedor", new JSONObject().put("cpf", "94271564656").put("nome", "Gorbadoc Oldbuck"));
+            body.put("valor", new JSONObject().put("original", "500.00"));
+            body.put("solicitacaoPagador", "Aluguel referente a data: ".concat(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
+            String txid = generateTXID();
+            HashMap<String, String> params = new HashMap<>();
+            params.put("txid", txid);
+            Mockito.when(environment.getProperty("CHAVE"))
+                    .thenReturn("811701dc-1257-4bf5-abb7-1968c2611d8b");
+            Mockito.when(pixService.prepareParams(generateTXID))
+                    .thenReturn(params);
+            body.put("chave", "811701dc-1257-4bf5-abb7-1968c2611d8b");
+            chargePix = pixService.createChargePix(body, generateTXID);
         }
     }
     @Test
@@ -159,5 +149,16 @@ public class PixServiceTest {
         params.put("id", loc.get("id").toString());
         JSONObject result = pixService.generateQRCode(params, hashMap);
         assertNotNull(result);
+    }
+
+    @Test
+    public void update_charge_test() throws Exception {
+        final String newValue = "100.00";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("txid", chargePix.getString("txid"));
+        JSONObject body = new JSONObject();
+        body.put("valor", new JSONObject().put("original", newValue));
+        JSONObject result = pixService.updateChargePix(params, body);
+        assertEquals(newValue, ((JSONObject) result.get("valor")).get("original"));
     }
 }

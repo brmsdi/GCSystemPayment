@@ -35,8 +35,8 @@ public class JWTService {
      */
     public static String createTokenJWT(final Map<String, String> claims, LocalDateTime localDateTimeNow, final int TIME) {
         JWTCreator.Builder builder = JWT.create()
-                .withIssuedAt(Date.from(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant()))
-                .withExpiresAt(Date.from(localDateTimeNow.plusMinutes(TIME).atZone(ZoneId.systemDefault()).toInstant()));
+                .withIssuedAt(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant())
+                .withExpiresAt(localDateTimeNow.plusMinutes(TIME).atZone(ZoneId.systemDefault()).toInstant());
         claims.forEach(builder::withClaim);
         return builder.sign(Algorithm.HMAC256(System.getenv("PRIVATE_KEY_TOKEN")));
     }

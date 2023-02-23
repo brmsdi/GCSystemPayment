@@ -41,3 +41,6 @@ credentials-prod.json
 
 /env
 .env
+
+*.key
+*.pub
