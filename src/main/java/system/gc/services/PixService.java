@@ -84,7 +84,6 @@ public class PixService {
      * @param params parametros exigidos pela API do gerencianet. ID do location
      * @return informações da divida atualizadas
      */
-
     public JSONObject updateChargePix(HashMap<String, String> params, JSONObject body) throws Exception {
         Gerencianet gerencianet = getGerenciaNET(new GerenciaNETInitialize(), credentials);
         return gerencianet.call("pixUpdateCharge", params, body);
